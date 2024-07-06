@@ -2,6 +2,7 @@ import express from 'express';
 import { PrismaClient } from '@prisma/client';
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
+import cors from "cors";
 
 dotenv.config();
 
@@ -9,6 +10,7 @@ const app = express();
 const prisma = new PrismaClient();
 
 app.use(express.json());
+app.use(cors({origin: '*'}));
 
 // Nodemailer transporter
 const transporter = nodemailer.createTransport({
