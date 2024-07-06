@@ -1,7 +1,7 @@
-import express from 'express';
-import { PrismaClient } from '@prisma/client';
-import nodemailer from 'nodemailer';
-import dotenv from 'dotenv';
+import express from "express";
+import { PrismaClient } from "@prisma/client";
+import nodemailer from "nodemailer";
+import dotenv from "dotenv";
 import cors from "cors";
 
 dotenv.config();
@@ -10,34 +10,40 @@ const app = express();
 const prisma = new PrismaClient();
 
 app.use(express.json());
-app.use(cors({origin: '*'}));
+app.use(
+  cors({
+    origin: [
+      "https://accredian-frontend-task-zeta-five.vercel.app",
+      "http://localhost:4000",
+    ],
+  })
+);
 
 // Nodemailer transporter
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  service: "gmail",
   auth: {
     user: process.env.GMAIL_USER,
     pass: process.env.GMAIL_PASS,
   },
 });
 
-app.post('/api/referral', async (req, res) => {
+app.post("/api/referral", async (req, res) => {
   try {
     const { name, email } = req.body;
 
     if (!name || !email) {
-      return res.status(400).json({ error: 'Name and email are required' });
+      return res.status(400).json({ error: "Name and email are required" });
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      return res.status(400).json({ error: 'Invalid email format' });
+      return res.status(400).json({ error: "Invalid email format" });
     }
 
     const referral = await prisma.referral.create({
       data: { name, email },
     });
-
 
     await transporter.sendMail({
       from: process.env.GMAIL_USER,
@@ -48,8 +54,10 @@ app.post('/api/referral', async (req, res) => {
 
     res.status(201).json(referral);
   } catch (error) {
-    console.error('Error processing referral:', error);
-    res.status(500).json({ error: 'An error occurred while processing the referral' });
+    console.error("Error processing referral:", error);
+    res
+      .status(500)
+      .json({ error: "An error occurred while processing the referral" });
   }
 });
 
