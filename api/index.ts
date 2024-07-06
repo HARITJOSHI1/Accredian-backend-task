@@ -14,7 +14,7 @@ app.use(
   cors({
     origin: [
       "https://accredian-frontend-task-zeta-five.vercel.app",
-      "http://localhost:4000",
+      "http://localhost:3000",
     ],
   })
 );
